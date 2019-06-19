@@ -51,7 +51,9 @@ RCT_EXPORT_METHOD(openURL:(NSString *)url) {
 
 
 
-RCT_EXPORT_METHOD(data:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_REMAP_METHOD(data, 
+                 resolver:(RCTPromiseResolveBlock)resolve 
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
     [self extractDataFromContext: extensionContext withCallback:^(NSString* val, NSString* contentType, NSException* err) {
         if(err) {
@@ -73,6 +75,7 @@ RCT_EXPORT_METHOD(data:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)r
         __block NSItemProvider *urlProvider = nil;
         __block NSItemProvider *imageProvider = nil;
         __block NSItemProvider *textProvider = nil;
+        __block NSItemProvider *pdfProvider = nil;
 
         [attachments enumerateObjectsUsingBlock:^(NSItemProvider *provider, NSUInteger idx, BOOL *stop) {
             if([provider hasItemConformingToTypeIdentifier:URL_IDENTIFIER]) {
@@ -83,6 +86,9 @@ RCT_EXPORT_METHOD(data:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)r
                 *stop = YES;
             } else if ([provider hasItemConformingToTypeIdentifier:IMAGE_IDENTIFIER]){
                 imageProvider = provider;
+                *stop = YES;
+            } else if ([provider hasItemConformingToTypeIdentifier:@"com.adobe.pdf"]){
+                pdfProvider = provider;
                 *stop = YES;
             }
         }];
@@ -111,6 +117,15 @@ RCT_EXPORT_METHOD(data:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)r
                     callback(text, @"text/plain", nil);
                 }
             }];
+        } else if (pdfProvider) {
+            [pdfProvider loadItemForTypeIdentifier:@"com.adobe.pdf" options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
+                NSURL *url = (NSURL *)item;
+
+                if(callback) {
+                    callback([url absoluteString], [[[url absoluteString] pathExtension] lowercaseString], nil);
+                }
+            }];
+        }
         } else {
             if(callback) {
                 callback(nil, nil, [NSException exceptionWithName:@"Error" reason:@"couldn't find provider" userInfo:nil]);
