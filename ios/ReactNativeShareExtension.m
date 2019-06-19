@@ -51,7 +51,7 @@ RCT_EXPORT_METHOD(openURL:(NSString *)url) {
 
 
 
-RCT_EXPORT_METHOD(data:(NSDictionary*)options,
+RCT_EXPORT_METHOD(data:(NSDictionary*)options
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject)
 {
