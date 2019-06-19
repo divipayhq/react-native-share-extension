@@ -118,7 +118,7 @@ RCT_REMAP_METHOD(data,
                 }
             }];
         } else if (pdfProvider) {
-            [pdfProvider loadItemForTypeIdentifier:@"com.adobe.pdf" options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
+            [pdfProvider loadItem:@"com.adobe.pdf" options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
                 NSURL *url = (NSURL *)item;
 
                 if(callback) {
