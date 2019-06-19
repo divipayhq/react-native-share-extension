@@ -51,9 +51,7 @@ RCT_EXPORT_METHOD(openURL:(NSString *)url) {
 
 
 
-RCT_EXPORT_METHOD(data:(NSDictionary*)options
-                 resolver:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(data:(NSDictionary*)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
     [self extractDataFromContext: extensionContext withCallback:^(NSString* val, NSString* contentType, NSException* err) {
         if(err) {
